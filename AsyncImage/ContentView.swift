@@ -63,23 +63,48 @@ struct ContentView: View {
 //        .padding(40)
         
     // MARK: - 4. PHASE
-        AsyncImage(url: URL(string: imageURL)) {
-//            SUCCESS: รูปสามารถโหลดได้สำเร็จ
-//            FAILURE : รูปโหลดไม่สำเร็จ
-//            EMPTY : พอโหลดเสร็จแต่มันดันไม่มีรูป
-            phase in
-            if let image = phase.image {
-                image.imageModifier()
-            } else if phase.error != nil {
-                Image(systemName: "ant.circle.fail")
+//        AsyncImage(url: URL(string: imageURL)) {
+////            SUCCESS: รูปสามารถโหลดได้สำเร็จ
+////            FAILURE : รูปโหลดไม่สำเร็จ
+////            EMPTY : พอโหลดเสร็จแต่มันดันไม่มีรูป
+//            phase in
+//            if let image = phase.image {
+//                image.imageModifier()
+//            } else if phase.error != nil {
+//                Image(systemName: "ant.circle.fail")
+//                    .placeHolderModifier()
+//            } else {
+//                Image(systemName: "photo.circle.fill").imageModifier()
+//            }
+//
+//        }
+//        .padding(40)
+//
+        
+        // MARK: - 5. ANIMATION
+        AsyncImage(url: URL(string: imageURL) , transaction: Transaction(animation: .spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0.25))) { phase in
+//            เราใช้ switch case ก็ได้นะ
+            switch phase {
+            case .success(let image):
+                image
+                    .imageModifier()
+//                อันนี้คือให้คือให้รูปมันเลื่อนขึ้นมาจากล่างแหละ
+//                    .transition(.move(edge: .bottom))
+//                อันนี้ให้มันไสลด์จากซ้ายเข้ามาแหละ
+//                    .transition(.slide)
+//                อันนี้คือให้มันดึ๋งๆ
+                    .transition(.scale)
+            case .failure(_):
+                Image(systemName: "ant.circle.fill")
                     .placeHolderModifier()
-            } else {
-                Image(systemName: "photo.circle.fill").imageModifier()
+            case .empty :
+                Image(systemName: "photo.circle.fill")
+                    .placeHolderModifier()
+            @unknown default:
+               ProgressView()
             }
-            
         }
         .padding(40)
-    
     }
     
 }
